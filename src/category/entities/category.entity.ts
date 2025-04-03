@@ -2,19 +2,16 @@ import { Product } from 'src/product/entities/product.entity';
 import {
   Column,
   Entity,
-  JoinColumn,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity()
-export class Company {
+export class Category {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({
-    length: 100,
-  })
+  @Column()
   companyName: string;
 
   @Column({
@@ -28,10 +25,9 @@ export class Company {
   })
   updatedAt: Date;
 
-  @OneToOne(() => Product, (product) => product.company, {
-    cascade: true,
-    onDelete: 'CASCADE',
+  @OneToMany(() => Product, (product) => product.category, {
+    cascade: true, // optional: automatically save related products
+    onDelete: 'CASCADE', // optional: delete products when category is deleted
   })
-  @JoinColumn()
-  product: Product;
+  products: Product[];
 }

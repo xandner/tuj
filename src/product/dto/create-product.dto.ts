@@ -23,4 +23,11 @@ export class CreateProductDto {
   @IsNumber()
   @IsNotEmpty()
   categoryId: number;
+
+  @ApiProperty({
+    name:"barcode"
+  })
+  @IsString()
+  @IsNotEmpty()
+  barcode:string
 }

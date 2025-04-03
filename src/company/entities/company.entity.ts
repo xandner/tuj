@@ -14,6 +14,7 @@ export class Company {
 
   @Column({
     length: 100,
+    nullable: false,
   })
   companyName: string;
 

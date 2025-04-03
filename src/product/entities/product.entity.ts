@@ -3,6 +3,7 @@ import { Company } from 'src/company/entities/company.entity';
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToOne,
@@ -14,8 +15,12 @@ export class Product {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({nullable:false})
   productName: string;
+
+  @Column({nullable:false})
+  @Index()
+  barcode:string
 
   @Column({
     default: () => 'CURRENT_TIMESTAMP',

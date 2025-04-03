@@ -39,6 +39,16 @@ export class ProductController {
   }
 
   @ApiParam({
+    name: 'barcode',
+  })
+  @ApiOkResponse()
+  @ApiBadRequestResponse()
+  @Get('barcode/:barcode')
+  async findByBarcode(@Param('barcode') barcode: string) {
+    return await this.productService.findByBarcode(barcode);
+  }
+
+  @ApiParam({
     name: 'id',
   })
   @ApiOkResponse()

@@ -34,6 +34,7 @@ export class ProductService {
         company,
         category,
         productName: createProductData.productName,
+        barcode: createProductData.barcode,
       });
       return await this.productRepository.save(product);
     } catch (error) {
@@ -82,6 +83,7 @@ export class ProductService {
       }
 
       product.productName = updateProductData.productName;
+      product.barcode = updateProductData.barcode;
 
       return await this.productRepository.save(product);
     } catch (error) {
@@ -92,6 +94,18 @@ export class ProductService {
   async remove(id: number): Promise<void> {
     try {
       await this.productRepository.delete(id);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async findByBarcode(barcode: string): Promise<Product> {
+    try {
+      const product = await this.productRepository.findOne({
+        where: { barcode },
+      });
+      if (!product) throw new NotFoundException('Barcode not exists');
+      return product;
     } catch (error) {
       throw new BadRequestException(error.message);
     }

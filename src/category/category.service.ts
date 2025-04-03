@@ -16,14 +16,22 @@ export class CategoryService {
   ) {}
 
   async create(createCategoryData: CreateCategoryDto): Promise<Category> {
-    const category = this.categoryRepository.create({
-      categoryName: createCategoryData.categoryName,
-    });
-    return await this.categoryRepository.save(category);
+    try {
+      const category = this.categoryRepository.create({
+        categoryName: createCategoryData.categoryName,
+      });
+      return await this.categoryRepository.save(category);
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 
   async findAll(): Promise<Category[]> {
-    return await this.categoryRepository.find();
+    try {
+      return await this.categoryRepository.find();
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 
   async findOne(id: number): Promise<Category> {

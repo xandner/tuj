@@ -1,9 +1,14 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from './entities/company.entity';
 import { Repository } from 'typeorm';
+import { throttle } from 'rxjs';
 
 @Injectable()
 export class CompanyService {
@@ -22,25 +27,52 @@ export class CompanyService {
     }
   }
 
-  findAll() {
-    return `This action returns all company`;
-  }
-
-  async findOne(id: number) :Promise<Company>{
+  async findAll(): Promise<Company[]> {
     try {
-      return await this.companyRepository.findOne({
-        where:{id}
-      })
+      return await this.companyRepository.find();
     } catch (error) {
-      throw new NotFoundException("Category not found")
+      throw new BadRequestException(error.message);
     }
   }
 
-  update(id: number, updateCompanyDto: UpdateCompanyDto) {
-    return `This action updates a #${id} company`;
+  async findOne(id: number): Promise<Company> {
+    try {
+      return await this.companyRepository.findOne({
+        where: { id },
+      });
+    } catch (error) {
+      throw new NotFoundException('Category not found');
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} company`;
+  async update(
+    id: number,
+    updateCompanyData: UpdateCompanyDto,
+  ): Promise<Company> {
+    try {
+      const company = await this.findOne(id);
+      if (!company) {
+        throw new NotFoundException(`Company with ID ${id} not found`);
+      }
+
+      // Merge the updates into the existing company
+      const updatedCompany = this.companyRepository.merge(
+        company,
+        updateCompanyData,
+      );
+
+      // Save the updated company
+      return await this.companyRepository.save(updatedCompany);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async remove(id: number): Promise<void> {
+    try {
+      await this.companyRepository.delete(id);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

@@ -35,25 +35,65 @@ export class ProductService {
         category,
         productName: createProductData.productName,
       });
-      return await this.productRepository.save(product)
+      return await this.productRepository.save(product);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
-  findAll() {
-    return `This action returns all product`;
+  async findAll(): Promise<Product[]> {
+    try {
+      return await this.productRepository.find();
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: number): Promise<Product> {
+    try {
+      const product = await this.productRepository.findOne({
+        where: { id },
+      });
+      if (!product) throw new NotFoundException('Product not found');
+      return product;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(
+    id: number,
+    updateProductData: UpdateProductDto,
+  ): Promise<Product> {
+    try {
+      const product = await this.findOne(id);
+      if (product.company.id !== updateProductData.companyId) {
+        const company = await this.companyService.findOne(
+          updateProductData.companyId,
+        );
+        product.company = company;
+      }
+
+      if (product.category.id !== updateProductData.categoryId) {
+        const category = await this.categoryService.findOne(
+          updateProductData.categoryId,
+        );
+        product.category = category;
+      }
+
+      product.productName = updateProductData.productName;
+
+      return await this.productRepository.save(product);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: number): Promise<void> {
+    try {
+      await this.productRepository.delete(id);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

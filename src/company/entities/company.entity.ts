@@ -32,6 +32,5 @@ export class Company {
     cascade: true,
     onDelete: 'CASCADE',
   })
-  @JoinColumn()
   product: Product;
 }

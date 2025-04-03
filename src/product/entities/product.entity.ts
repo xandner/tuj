@@ -29,11 +29,12 @@ export class Product {
   updatedAt: Date;
 
   @OneToOne(() => Company, (company) => company.product)
+  @JoinColumn({ name: 'company_id' })
   company: Company;
 
   @ManyToOne(() => Category, (category) => category.products, {
-    nullable: false, // Product must have a category
-    eager: true, // optional: always load the category with product
+    nullable: false,
+    eager: true,
   })
   @JoinColumn({ name: 'category_id' }) // custom column name
   category: Category;

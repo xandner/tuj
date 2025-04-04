@@ -24,7 +24,7 @@ jobs:
 
       - name: Set up Docker Compose
         run: |
-          docker-compose -f ./docker-compose.yml up --build
+          docker compose -f ./docker-compose.yml up --build
 
       - name: Wait for services
         run: |

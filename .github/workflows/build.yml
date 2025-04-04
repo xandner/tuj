@@ -12,6 +12,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: ls
+        run: |
+          ls -ltrh
+          cd ..
+          ls -ltrh
+          cd ..
+          ls -ltrh
+          
       - name: Set up Docker Compose
         run: |
           docker compose -f ../../docker-compose.yml up --build

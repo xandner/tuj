@@ -9,7 +9,7 @@ import { CategoryModule } from './category/category.module';
 import { SubCategoryModule } from './sub-category/sub-category.module';
 import { LoggerModule } from './shared/logger/logger.module';
 import { CacheModule } from '@nestjs/cache-manager';
-import * as redisStore from 'cache-manager-redis-store';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Module({
   imports: [
@@ -25,7 +25,7 @@ import * as redisStore from 'cache-manager-redis-store';
         database: 'tuj',
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         migrations: ['migrations/*.ts'],
-        logging: true,
+        logging: false,
         charset: 'utf8mb4',
         timezone: '+00:00',
         debug: true,
@@ -41,13 +41,16 @@ import * as redisStore from 'cache-manager-redis-store';
     CacheModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
+      isGlobal: true,
+
       useFactory: async (configService: ConfigService) => ({
         store: redisStore,
         host: configService.get('REDIS_HOST', 'localhost'),
-        port: configService.get('REDIS_PORT', 6379),
-        ttl: configService.get('CACHE_TTL', 600),
+        port: +configService.get('REDIS_PORT', 6379),
+        ttl: +configService.get('CACHE_TTL', 600*100),
       }),
     }),
+    
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -9,12 +10,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from './entities/company.entity';
 import { Repository } from 'typeorm';
 import { throttle } from 'rxjs';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class CompanyService {
   constructor(
     @InjectRepository(Company)
     private readonly companyRepository: Repository<Company>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
   async create(createCompanyData: CreateCompanyDto): Promise<Company> {
     try {
@@ -37,11 +41,16 @@ export class CompanyService {
 
   async findOne(id: number): Promise<Company> {
     try {
-      return await this.companyRepository.findOneOrFail({
+      let company = await this.cacheManager.get<Company>(`company_${id}`);
+      if (company) return company;
+      company = await this.companyRepository.findOne({
         where: { id },
       });
+      if (!company) throw new NotFoundException('Company not found');
+      await this.cacheManager.set(`company_${id}`, company);
+      return company;
     } catch (error) {
-      throw new NotFoundException('Category not found');
+      throw new BadRequestException(error.message);
     }
   }
 

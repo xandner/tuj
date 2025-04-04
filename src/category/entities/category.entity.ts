@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Product } from 'src/product/entities/product.entity';
+import { SubCategory } from 'src/sub-category/entities/sub-category.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -26,4 +26,7 @@ export class Category {
     onDelete: 'CASCADE', // optional: delete products when category is deleted
   })
   products: Product[];
+
+  @OneToMany(()=>SubCategory,(subCategory)=>subCategory.category)
+  subCategories:SubCategory[]
 }

@@ -55,6 +55,7 @@ export class ProductService {
       const product = await this.productRepository.findOne({
         where: { id },
       });
+      console.log(product)
       if (!product) throw new NotFoundException('Product not found');
       return product;
     } catch (error) {
@@ -68,6 +69,7 @@ export class ProductService {
   ): Promise<Product> {
     try {
       const product = await this.findOne(id);
+      console.log(product)
       if (product.company.id !== updateProductData.companyId) {
         const company = await this.companyService.findOne(
           updateProductData.companyId,

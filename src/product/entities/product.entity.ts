@@ -15,12 +15,12 @@ export class Product {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({nullable:false})
+  @Column({ nullable: false })
   productName: string;
 
-  @Column({nullable:false})
+  @Column({ nullable: false })
   @Index()
-  barcode:string
+  barcode: string;
 
   @Column({
     default: () => 'CURRENT_TIMESTAMP',
@@ -33,7 +33,10 @@ export class Product {
   })
   updatedAt: Date;
 
-  @OneToOne(() => Company, (company) => company.product)
+  @OneToOne(() => Company, (company) => company.product, {
+    nullable: false,
+    eager: true,
+  })
   @JoinColumn({ name: 'company_id' })
   company: Company;
 

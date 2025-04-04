@@ -37,7 +37,7 @@ export class CompanyService {
 
   async findOne(id: number): Promise<Company> {
     try {
-      return await this.companyRepository.findOne({
+      return await this.companyRepository.findOneOrFail({
         where: { id },
       });
     } catch (error) {

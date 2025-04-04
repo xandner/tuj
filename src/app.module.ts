@@ -6,6 +6,10 @@ import { ProductModule } from './product/product.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CategoryModule } from './category/category.module';
+import { SubCategoryModule } from './sub-category/sub-category.module';
+import { LoggerModule } from './shared/logger/logger.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
@@ -32,6 +36,18 @@ import { CategoryModule } from './category/category.module';
     CompanyModule,
     ProductModule,
     CategoryModule,
+    SubCategoryModule,
+    LoggerModule,
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        store: redisStore,
+        host: configService.get('REDIS_HOST', 'localhost'),
+        port: configService.get('REDIS_PORT', 6379),
+        ttl: configService.get('CACHE_TTL', 600),
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

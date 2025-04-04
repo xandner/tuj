@@ -12,17 +12,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: ls
-        run: |
-          ls -ltrh
-          cd ..
-          ls -ltrh
-          cd ..
-          ls -ltrh
-          
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
       - name: Set up Docker Compose
         run: |
-          docker compose -f ../../docker-compose.yml up --build
+          docker compose -f docker-compose.yml up --build
 
       - name: Wait for services
         run: |

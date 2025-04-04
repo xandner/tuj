@@ -12,6 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: List files
+        run: ls
+        
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
